@@ -5,16 +5,17 @@ const Sale = db.sale;
 exports.create = (req, res) => {
     console.log ('req.body', req.body);
 
+    console.log ('req.body.sale', req.body.sale);
     // Validate request
-    if (!req.body.saleId) {
+    if (req.body.sale === undefined) {
         res.status (400).send ({message: 'Content can not be empty!'});
         return;
     }
 
     // Create a Sale
     const sale = new Sale ({
-        saleId: req.body.saleId,
-        visible: req.body.visible,
+        sale: req.body.sale,
+        visible: req.body.visible ? req.body.visible : true,
     });
 
     // Save Sale in the database

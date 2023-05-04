@@ -3,7 +3,7 @@ module.exports = mongoose => {
         "sale",
         mongoose.Schema(
             {
-                saleId: String,
+                sale: Object,
                 visible: Boolean,
             },
             { timestamps: true }

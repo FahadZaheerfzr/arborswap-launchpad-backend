@@ -5,7 +5,7 @@ const db = require('./app/models');
 const app = express();
 
 var corsOptions = {
-    origin: 'http://localhost:8081'
+    origin: ['http://localhost:8081', 'http://localhost:3000'],
 };
 
 db.mongoose

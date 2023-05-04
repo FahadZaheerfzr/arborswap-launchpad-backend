@@ -1,3 +1,3 @@
 module.exports = {
-    url : 'mongodb+srv://aabdullahbscs20seecs:multiscan17sf9@cluster0.1kzng0x.mongodb.net/?retryWrites=true&w=majority'
+    url : 'mongodb+srv://fzaheerbscs19seecs:hXz16DcApVp2pjwf@arborswap-launchpad.nekeis3.mongodb.net/?retryWrites=true&w=majority'
 };
