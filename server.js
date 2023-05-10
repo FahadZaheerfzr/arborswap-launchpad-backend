@@ -6,7 +6,7 @@ const app = express();
 
 var corsOptions = {
     origin: ['http://localhost:8081', 'http://localhost:8000', 'http://localhost:3000'],
-    credentials:false,            //access-control-allow-credentials:true
+    credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200,
 };
 
