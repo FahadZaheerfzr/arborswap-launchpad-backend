@@ -4,11 +4,6 @@ const db = require('./app/models');
 
 const app = express();
 
-var corsOptions = {
-    origin: ['http://localhost:8081', 'http://localhost:8000'],
-    credentials:true,            //access-control-allow-credentials:true
-    optionSuccessStatus:200,
-};
 
 db.mongoose
     .connect(db.url, {
@@ -23,7 +18,9 @@ db.mongoose
         process.exit();
     }
     );
-app.use(cors(corsOptions));
+app.use(cors());
+
+app.options('*', cors());
 
 // parse requests of content-type - application/json
 app.use(express.json());
