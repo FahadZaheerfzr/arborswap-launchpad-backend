@@ -5,7 +5,7 @@ const db = require('./app/models');
 const app = express();
 
 var corsOptions = {
-    origin: ['http://localhost:8081', 'http://localhost:8000', 'http://localhost:3000'],
+    origin: ['http://localhost:8081', 'http://localhost:8000', 'http://localhost:3000', 'https://arborswap-launchpad.vercel.app'],
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200,
 };
@@ -23,7 +23,7 @@ db.mongoose
         process.exit();
     }
     );
-app.use(cors());
+app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(express.json());
