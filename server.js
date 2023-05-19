@@ -5,7 +5,7 @@ const db = require('./app/models');
 const app = express();
 
 var corsOptions = {
-    origin: ['http://localhost:8081', 'http://localhost:8000', 'http://localhost:3000', 'https://arborswap-launchpad.vercel.app', 'http://54.242.172.198'],
+    origin: ['*', 'http://localhost:8081', 'http://localhost:8000', 'http://localhost:3000', 'https://arborswap-launchpad.vercel.app', 'http://54.242.172.198'],
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200,
 };
