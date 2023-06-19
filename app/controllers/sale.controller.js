@@ -33,23 +33,58 @@ exports.create = (req, res) => {
 }
 
 // Retrieve all Sales from the database.
-exports.findAll = (req, res) => {
-    const saleId = req.query.saleId;
-    var condition = saleId
-        ? {saleId: {$regex: new RegExp (saleId), $options: 'i'}}
-        : {};
+// exports.findAll = (req, res) => {
+//     const saleId = req.query.saleId;
+//     console.log ('saleId', saleId);
+//     var condition = saleId
+//         ? {saleId: {$regex: new RegExp (saleId), $options: 'i'}}
+//         : {};
 
-    Sale.find (condition)
-        .then (data => {
-            res.send (data);
-        })
-        .catch (err => {
-            res.status (500).send ({
-                message:
-                    err.message || 'Some error occurred while retrieving sales.',
-            });
+//     Sale.find (condition)
+//         .then (data => {
+//             console.log('data', data)
+//             res.send (data);
+//         })
+//         .catch (err => {
+//             res.status (500).send ({
+//                 message:
+//                     err.message || 'Some error occurred while retrieving sales.',
+//             });
+//         });
+// }
+exports.findAll = (req, res) => {
+    const currentDate = new Date();
+  
+    Sale.find({})
+      .then(data => {
+        const salesWithStatus = data.map(sale => {
+          const startTime = new Date(sale.sale.startDate * 1000); // Convert Unix timestamp to milliseconds
+          const endTime = new Date(sale.sale.endDate * 1000); // Convert Unix timestamp to milliseconds
+          if(sale.sale.saleId===12){
+            console.log(sale,"sale")
+            console.log(startTime, endTime, currentDate)
+          }
+          if (startTime > currentDate) {
+            sale.sale.status = 'Upcoming';
+          } else if (endTime < currentDate) {
+            sale.sale.status = 'Ended';
+          } else {
+            sale.sale.status = 'Live';
+          }
+          return sale;
         });
-}
+  
+        res.send(salesWithStatus);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || 'Some error occurred while retrieving sales.',
+        });
+      });
+  };
+  
+  
 
 // Find a single Sale with an id
 exports.findOne = (req, res) => {
