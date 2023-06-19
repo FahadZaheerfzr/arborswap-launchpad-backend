@@ -78,7 +78,7 @@ exports.findAll = (req, res) => {
           }
           return sale;
         });
-        cache.set('sales', salesWithStatus, 60 * 3);   // 3 minutes
+        cache.set('sales', salesWithStatus, 60 * 1);   // 1 minute
         res.send(salesWithStatus);
       })
       .catch(err => {
