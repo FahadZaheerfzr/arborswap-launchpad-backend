@@ -1,4 +1,6 @@
 const db = require ('../models');
+const NodeCache = require('node-cache');
+const cache = new NodeCache();
 const Sale = db.sale;
 
 // Create and Save a new Sale
@@ -54,16 +56,19 @@ exports.create = (req, res) => {
 // }
 exports.findAll = (req, res) => {
     const currentDate = new Date();
+
+    const cachedSales = cache.get('sales');
+    if (cachedSales) {
+        console.log('cachedSales')
+        res.send(cachedSales);
+        return;
+    }
   
     Sale.find({})
       .then(data => {
         const salesWithStatus = data.map(sale => {
           const startTime = new Date(sale.sale.startDate * 1000); // Convert Unix timestamp to milliseconds
           const endTime = new Date(sale.sale.endDate * 1000); // Convert Unix timestamp to milliseconds
-          if(sale.sale.saleId===12){
-            console.log(sale,"sale")
-            console.log(startTime, endTime, currentDate)
-          }
           if (startTime > currentDate) {
             sale.sale.status = 'Upcoming';
           } else if (endTime < currentDate) {
@@ -73,7 +78,7 @@ exports.findAll = (req, res) => {
           }
           return sale;
         });
-  
+        cache.set('sales', salesWithStatus, 60 * 3);   // 3 minutes
         res.send(salesWithStatus);
       })
       .catch(err => {
