@@ -71,7 +71,7 @@ exports.findAll = (req, res) => {
           const endTime = new Date(sale.sale.endDate * 1000); // Convert Unix timestamp to milliseconds
           if (startTime > currentDate) {
             sale.sale.status = 'Upcoming';
-          } else if (endTime < currentDate) {
+          } else if (endTime < currentDate || sale.visible === false) {
             sale.sale.status = 'Ended';
           } else {
             sale.sale.status = 'Live';
