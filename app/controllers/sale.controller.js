@@ -18,6 +18,7 @@ exports.create = (req, res) => {
     const sale = new Sale ({
         sale: req.body.sale,
         visible: req.body.visible ? req.body.visible : true,
+        isFinished: req.body.isFinished ? req.body.isFinished : false,
     });
 
     // Save Sale in the database
@@ -127,6 +128,7 @@ exports.update = (req, res) => {
         }
         )
         .catch (err => {
+            console.log(err)
             res.status (500).send ({
                 message: 'Error updating Sale with id=' + id,
             });
