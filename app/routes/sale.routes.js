@@ -13,7 +13,7 @@ module.exports = app => {
     router.get("/:id", sale.findOne);
 
     // Update a Sale with id
-    router.put("/:id", sale.update);
+    router.put("/:id", sale.findByIdAndUpdate);
 
     // Delete a Sale with id
     router.delete("/:id", sale.delete);
