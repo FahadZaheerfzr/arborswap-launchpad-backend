@@ -1,6 +1,6 @@
 const db = require ('../models');
-const NodeCache = require('node-cache');
-const cache = new NodeCache();
+// const NodeCache = require('node-cache');
+// const cache = new NodeCache();
 const Sale = db.sale;
 
 // Create and Save a new Sale
@@ -19,6 +19,7 @@ exports.create = (req, res) => {
         sale: req.body.sale,
         visible: req.body.visible ? req.body.visible : true,
         isFinished: req.body.isFinished ? req.body.isFinished : false,
+        removed : req.body.removed ? req.body.removed : false,
     });
 
     // Save Sale in the database
@@ -55,15 +56,9 @@ exports.create = (req, res) => {
 //             });
 //         });
 // }
-exports.findAll = (req, res) => {
+exports.findAllWhereNotRemoved = (req, res) => {
     const currentDate = new Date();
 
-    const cachedSales = cache.get('sales');
-    if (cachedSales) {
-        console.log('cachedSales')
-        res.send(cachedSales);
-        return;
-    }
   
     Sale.find({})
       .then(data => {
@@ -79,7 +74,7 @@ exports.findAll = (req, res) => {
           }
           return sale;
         });
-        cache.set('sales', salesWithStatus, 60 * 1);   // 1 minute
+        // cache.set('sales', salesWithStatus, 60 * 1);   // 1 minute
         res.send(salesWithStatus);
       })
       .catch(err => {
@@ -90,7 +85,32 @@ exports.findAll = (req, res) => {
       });
   };
   
-  
+//this is for user, it will not return removed sales
+exports.findAll = (req, res) => {
+    const currentDate = new Date();
+    console.log("here")
+    Sale.find({ removed: false })
+        .then(data => {
+            const salesWithStatus = data.map(sale => {
+                const startTime = new Date(sale.sale.startDate * 1000); // Convert Unix timestamp to milliseconds
+                const endTime = new Date(sale.sale.endDate * 1000); // Convert Unix timestamp to milliseconds
+                if (startTime > currentDate) {
+                    sale.sale.status = 'Upcoming';
+                } else if (endTime < currentDate || sale.visible === false) {
+                    sale.sale.status = 'Ended';
+                } else {
+                    sale.sale.status = 'Live';
+                }
+                return sale;
+            });
+            res.send(salesWithStatus);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || 'Some error occurred while retrieving sales.',
+            });
+        });
+};
 
 // Find a single Sale with an id
 exports.findOne = (req, res) => {
@@ -112,7 +132,7 @@ exports.findOne = (req, res) => {
 exports.findByIdAndUpdate = (req, res) => {
     const id = req.params.id;
     const updateData = req.body;
-    console.log('updateData', updateData)
+
     Sale.findByIdAndUpdate(id, updateData, { new: true })
         .then((updatedSale) => {
             if (!updatedSale) {
