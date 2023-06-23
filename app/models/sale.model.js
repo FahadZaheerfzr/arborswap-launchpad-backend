@@ -5,6 +5,9 @@ module.exports = mongoose => {
             {
                 sale: Object,
                 visible: Boolean,
+                isFinished: Boolean,
+                removed: Boolean,
+                isCancelled:Boolean
             },
             { timestamps: true }
         )
