@@ -115,18 +115,32 @@ exports.findAll = (req, res) => {
 // Find a single Sale with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
-    Sale.findById (id)
-        .then (data => {
-            if (!data)
-                res.status (404).send ({message: 'Not found Sale with id ' + id});
-            else res.send (data);
+    const currentDate = new Date();
+
+    Sale.findById(id)
+        .then(data => {
+            if (!data) {
+                return res.status(404).send({ message: 'Not found Sale with id ' + id });
+            }
+
+            const startTime = new Date(data.sale.startDate * 1000);
+            const endTime = new Date(data.sale.endDate * 1000);
+
+            if (startTime > currentDate) {
+                data.sale.status = 'Upcoming';
+            } else if (endTime < currentDate || data.visible === false) {
+                data.sale.status = 'Ended';
+            } else {
+                data.sale.status = 'Live';
+            }
+
+            res.send(data);
         })
-        .catch (err => {
-            res
-                .status (500)
-                .send ({message: 'Error retrieving Sale with id=' + id});
+        .catch(err => {
+            res.status(500).send({ message: 'Error retrieving Sale with id=' + id });
         });
-}
+};
+
 
 // Update a Sale by the id in the request
 exports.findByIdAndUpdate = (req, res) => {
