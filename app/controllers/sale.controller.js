@@ -20,6 +20,7 @@ exports.create = (req, res) => {
         visible: req.body.visible ? req.body.visible : true,
         isFinished: req.body.isFinished ? req.body.isFinished : false,
         removed : req.body.removed ? req.body.removed : false,
+        isCancelled: req.body.isCancelled ? req.body.isCancelled : false
     });
 
     // Save Sale in the database
