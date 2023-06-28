@@ -13,7 +13,7 @@ exports.uploadBanner = async (req, res) => {
     const filename = `${Date.now()}-${urlFile.originalname}`;
 
     // Define the file path
-    const filePath = path.join(__dirname, './public', filename);
+    const filePath = path.join(__dirname, '../public', filename);
 
     // Write the file to the disk
     fs.writeFileSync(filePath, urlFile.buffer);
