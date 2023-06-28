@@ -13,14 +13,14 @@ exports.uploadBanner = async (req, res) => {
     const filename = `${Date.now()}-${urlFile.originalname}`;
 
     // Define the file path
-    const filePath = path.join(__dirname, '../public', filename);
+    const filePath = path.join(__dirname, '../../images', filename);
 
     // Write the file to the disk
     fs.writeFileSync(filePath, urlFile.buffer);
 
     // Save the URL to the database
     const banner = new Banner({
-      url: `/public/${filename}`,
+      url: `/images/${filename}`,
       name,
     });
     await banner.save();

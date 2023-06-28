@@ -33,6 +33,10 @@ app.use(express.urlencoded({
     extended: true
 }));
 
+app.use(express.static('public'));
+app.use('/images', express.static('images'));
+
+
 // simple route
 app.get('/', (req, res) => {
     res.json({
