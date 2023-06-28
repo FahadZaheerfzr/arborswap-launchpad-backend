@@ -1,37 +1,40 @@
+const fs = require('fs');
+const path = require('path');
 const db = require('../models');
 const Banner = db.banner;
-// Create and Save a new Banner
-exports.create = (req, res) => {
-    console.log("req.body", req.body);
 
-    // Validate request
-    if (!req.body.url) {
-        res.status(400).send({ message: 'Content can not be empty!' });
-        return;
-    }
+exports.uploadBanner = async (req, res) => {
+  try {
+    const { name } = req.body;
+    
+    const urlFile = req.files['url'][0];
 
-    // Create a Banner
+    // Create a unique filename
+    const filename = `${Date.now()}-${urlFile.originalname}`;
+
+    // Define the file path
+    const filePath = path.join(__dirname, './public', filename);
+
+    // Write the file to the disk
+    fs.writeFileSync(filePath, urlFile.buffer);
+
+    // Save the URL to the database
     const banner = new Banner({
-        url: req.body.url,
-        url2: req.body.url2,
-        url3: req.body.url3,
-        name: req.body.name,
+      url: `/public/${filename}`,
+      name,
     });
+    await banner.save();
+
+    res.status(201).json({ message: 'Banner uploaded successfully' });
+  } catch (error) {
+    console.log('Error uploading banner:', error);
+    res.status(500).json({ message: 'Banner upload failed' });
+  }
+};
 
 
-    // Save Banner in the database
-    banner
-        .save(banner)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500)
-                .send({
-                    message: err.message || 'Some error occurred while creating the Banner.'
-                });
-        });
-}
+
+
 
 // Retrieve all Banners from the database.
 exports.findAll = (req, res) => {

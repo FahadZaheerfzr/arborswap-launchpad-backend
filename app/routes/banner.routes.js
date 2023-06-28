@@ -1,11 +1,11 @@
 module.exports = app => {
     const banner = require("../controllers/banner.controller.js");
+    const upload = require("../middleware/upload.js");
 
     var router = require("express").Router();
 
     // Create a new Banner
-    router.post("/", banner.create);
-
+    router.post("/", upload.fields([{ name: 'url', maxCount: 1 }]), banner.uploadBanner );
     // Retrieve all Banners
     router.get("/", banner.findAll);
 

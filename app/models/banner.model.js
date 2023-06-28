@@ -1,12 +1,10 @@
 module.exports = mongoose => {
     const Banner = mongoose.model(
-        "banner",
+        "Banner",
         mongoose.Schema(
             {
-                url : String,
-                url2 : String,
-                url3 : String,
-                name : String,
+                url: String,
+                name: String,
             },
             { timestamps: true }
         )
