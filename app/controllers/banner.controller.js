@@ -13,6 +13,8 @@ exports.create = (req, res) => {
     // Create a Banner
     const banner = new Banner({
         url: req.body.url,
+        url2: req.body.url2,
+        url3: req.body.url3,
         name: req.body.name,
     });
 

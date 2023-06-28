@@ -4,6 +4,8 @@ module.exports = mongoose => {
         mongoose.Schema(
             {
                 url : String,
+                url2 : String,
+                url3 : String,
                 name : String,
             },
             { timestamps: true }
