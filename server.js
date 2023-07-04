@@ -43,6 +43,7 @@ app.get('/', (req, res) => {
 
 require('./app/routes/banner.routes')(app);
 require('./app/routes/sale.routes')(app);
+require('./app/routes/airdrop.routes')(app);
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
