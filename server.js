@@ -5,7 +5,7 @@ const db = require('./app/models');
 const app = express();
 
 var corsOptions = {
-    origin: ['*', 'http://localhost:8081', 'http://localhost:8000', 'http://localhost:3000', 'https://arborswap-launchpad.vercel.app', 'http://54.242.172.198', 'http://54.173.22.152', 'http://localhost:3001', 'http://3.80.119.93'],
+    origin: ['*', 'http://localhost:8081', 'http://localhost:8000', 'http://localhost:3000', 'https://arborswap-launchpad.vercel.app', 'http://54.242.172.198', 'http://54.173.22.152', 'http://localhost:3001', 'http://3.80.119.93', 'http://34.238.118.99'],
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200,
 };
@@ -32,6 +32,10 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
+
+app.use(express.static('public'));
+app.use('/images', express.static('images'));
+
 
 // simple route
 app.get('/', (req, res) => {
