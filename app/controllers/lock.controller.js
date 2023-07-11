@@ -1,111 +1,123 @@
 const db = require('../models');
-const Airdrop = db.airdrop;
+const Lock = db.lock;
 
 // Create and Save a new Airdrop
 exports.create = (req, res) => {
     console.log('req.body', req.body);
 
-    console.log('req.body.airdrop', req.body.airdrop);
     // Validate request
-    if (req.body.airdrop === undefined) {
+    if (req.body.Lock === undefined) {
         res.status(400).send({ message: 'Content cannot be empty!' });
         return;
     }
-
-    // Create an Airdrop
-    const airdrop = new Airdrop({
-        airdrop: req.body.airdrop,
+    // Create an Lock
+    const lock = new Lock({
+        lock: req.body.Lock,
         visible: req.body.visible ? req.body.visible : true,
         isFinished: req.body.isFinished ? req.body.isFinished : false,
+        liquidity: req.body.liquidity,
         removed: req.body.removed ? req.body.removed : false,
         isCancelled: req.body.isCancelled ? req.body.isCancelled : false
     });
 
-    // Save Airdrop in the database
-    airdrop
-        .save(airdrop)
+
+    // Save Lock in the database
+    lock
+        .save(lock)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || 'Some error occurred while creating the Airdrop.',
+                    err.message || 'Some error occurred while creating the Lock.',
             });
         });
 };
 
-// Retrieve all Airdrops from the database
+// Retrieve all Locks from the database
 exports.findAll = (req, res) => {
-    Airdrop.find({ removed: false })
+    const { liquidity } = req.query;
+    const filter = { removed: false };
+  
+    if (liquidity === 'true') {
+      filter.liquidity = true;
+    } else if (liquidity === 'false') {
+      filter.liquidity = false;
+    }
+  
+    Lock.find(filter)
       .then(data => {
-        const airdropAddresses = data.map(airdrop => airdrop.airdrop.airdropAddress);
-        res.send(airdropAddresses);
+        console.log(data)
+        const lockAddresses = data.map(lock => lock.lock.lockAddress);
+        res.send(lockAddresses);
       })
       .catch(err => {
         res.status(500).send({
-          message: err.message || 'Some error occurred while retrieving airdrops.',
+          message: err.message || 'Some error occurred while retrieving Locks.',
         });
       });
   };
+  
+  
 
-// Find a single Airdrop with an id
+// Find a single Lock with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-    Airdrop.findById(id)
+    Lock.findById(id)
         .then(data => {
             if (!data) {
-                return res.status(404).send({ message: 'Not found Airdrop with id ' + id });
+                return res.status(404).send({ message: 'Not found Lock with id ' + id });
             }
 
             res.send(data);
         })
         .catch(err => {
-            res.status(500).send({ message: 'Error retrieving Airdrop with id=' + id });
+            res.status(500).send({ message: 'Error retrieving Lock with id=' + id });
         });
 };
 
-// Update an Airdrop by the id in the request
+// Update an Lock by the id in the request
 exports.findByIdAndUpdate = (req, res) => {
     const id = req.params.id;
     const updateData = req.body;
 
-    Airdrop.findByIdAndUpdate(id, updateData, { new: true })
-        .then(updatedAirdrop => {
-            if (!updatedAirdrop) {
+    Lock.findByIdAndUpdate(id, updateData, { new: true })
+        .then(updatedLock => {
+            if (!updatedLock) {
                 return res.status(404).send({
-                    message: `Airdrop with ID ${id} not found.`,
+                    message: `Lock with ID ${id} not found.`,
                 });
             }
-            res.send(updatedAirdrop);
+            res.send(updatedLock);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || `Error updating Airdrop with ID ${id}.`,
+                message: err.message || `Error updating Lock with ID ${id}.`,
             });
         });
 };
 
-// Delete an Airdrop with the specified id in the request
+// Delete an Lock with the specified id in the request
 exports.delete = (req, res) => {
     const id = req.params.id;
 
-    Airdrop.findByIdAndRemove(id)
+    Lock.findByIdAndRemove(id)
         .then(data => {
             if (!data) {
                 res.status(404).send({
-                    message: `Cannot delete Airdrop with id=${id}. Maybe Airdrop was not found!`,
+                    message: `Cannot delete Lock with id=${id}. Maybe Lock was not found!`,
                 });
             } else {
                 res.send({
-                    message: 'Airdrop was deleted successfully!',
+                    message: 'Lock was deleted successfully!',
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: 'Could not delete Airdrop with id=' + id,
+                message: 'Could not delete Lock with id=' + id,
             });
         });
 };
