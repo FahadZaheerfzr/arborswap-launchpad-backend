@@ -17,7 +17,8 @@ exports.create = (req, res) => {
         isFinished: req.body.isFinished ? req.body.isFinished : false,
         liquidity: req.body.liquidity,
         removed: req.body.removed ? req.body.removed : false,
-        isCancelled: req.body.isCancelled ? req.body.isCancelled : false
+        isCancelled: req.body.isCancelled ? req.body.isCancelled : false,
+        chainId : req.body.chainId
     });
 
 
@@ -37,7 +38,9 @@ exports.create = (req, res) => {
 
 // Retrieve all Locks from the database
 exports.findAll = (req, res) => {
-    const { liquidity } = req.query;
+    let { liquidity,chainId } = req.query;
+    chainId = parseInt(chainId);
+    console.log(liquidity,chainId)
     const filter = { removed: false };
   
     if (liquidity === 'true') {
@@ -45,6 +48,9 @@ exports.findAll = (req, res) => {
     } else if (liquidity === 'false') {
       filter.liquidity = false;
     }
+    if (chainId) {
+        filter.chainId = chainId;
+        }
   
     Lock.find(filter)
       .then(data => {

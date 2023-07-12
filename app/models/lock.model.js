@@ -8,7 +8,8 @@ module.exports = mongoose => {
                 isFinished: Boolean,
                 liquidity: Boolean,
                 removed: Boolean,
-                isCancelled:Boolean
+                isCancelled:Boolean,
+                chainId: Number,
             },
             { timestamps: true }
         )

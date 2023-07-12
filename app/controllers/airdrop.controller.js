@@ -18,7 +18,8 @@ exports.create = (req, res) => {
         visible: req.body.visible ? req.body.visible : true,
         isFinished: req.body.isFinished ? req.body.isFinished : false,
         removed: req.body.removed ? req.body.removed : false,
-        isCancelled: req.body.isCancelled ? req.body.isCancelled : false
+        isCancelled: req.body.isCancelled ? req.body.isCancelled : false,
+        chainId: req.body.chainId
     });
 
     // Save Airdrop in the database
@@ -37,7 +38,13 @@ exports.create = (req, res) => {
 
 // Retrieve all Airdrops from the database
 exports.findAll = (req, res) => {
-    Airdrop.find({ removed: false })
+    let { chainId } = req.query;
+    chainId = parseInt(chainId);
+    const filter = { removed: false };
+    if (chainId) {
+        filter.chainId = chainId;
+    }
+    Airdrop.find(filter)
       .then(data => {
         const airdropAddresses = data.map(airdrop => airdrop.airdrop.airdropAddress);
         res.send(airdropAddresses);
