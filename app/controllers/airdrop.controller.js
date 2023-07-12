@@ -46,8 +46,7 @@ exports.findAll = (req, res) => {
     }
     Airdrop.find(filter)
       .then(data => {
-        const airdropAddresses = data.map(airdrop => airdrop.airdrop.airdropAddress);
-        res.send(airdropAddresses);
+        res.send(data);
       })
       .catch(err => {
         res.status(500).send({
