@@ -54,12 +54,7 @@ exports.findAll = (req, res) => {
   Lock.find(filter)
     .then((data) => {
       console.log(data);
-      if (liquidity === "true") {
-        res.send(data);
-      } else {
-        const lockAddresses = data.map((lock) => lock.lock.lockAddress);
-        res.send(lockAddresses);
-      }
+      res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
@@ -71,7 +66,7 @@ exports.findAll = (req, res) => {
 // Find a single Lock with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
-
+  console.log(id,"id")
   Lock.findById(id)
     .then((data) => {
       if (!data) {
