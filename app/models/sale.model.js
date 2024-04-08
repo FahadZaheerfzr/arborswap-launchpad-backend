@@ -7,7 +7,8 @@ module.exports = mongoose => {
                 visible: Boolean,
                 isFinished: Boolean,
                 removed: Boolean,
-                isCancelled:Boolean
+                isCancelled:Boolean,
+                isTrending:Boolean,
             },
             { timestamps: true }
         )
