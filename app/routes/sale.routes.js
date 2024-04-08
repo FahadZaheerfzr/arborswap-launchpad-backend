@@ -21,5 +21,9 @@ module.exports = app => {
     // Delete a Sale with id
     router.delete("/:id", sale.delete);
 
+    // set isTrending to true
+    router.put("/trending/:id", sale.setTrending);
+    
+
     app.use('/api/sale', router);
 };
