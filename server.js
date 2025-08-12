@@ -5,7 +5,7 @@ const db = require('./app/models');
 const app = express();
 
 var corsOptions = {
-    origin: ['*', 'http://localhost:8081', 'https://portal.arborpad.io', 'http://localhost:8000', 'http://localhost:3000', 'https://adminpanel.arborswap.org', 'https://arborswap-launchpad.vercel.app', 'http://54.242.172.198', 'http://54.173.22.152', 'http://localhost:3001', 'http://3.80.119.93', 'http://34.238.118.99', 'https://protocol.arborswap.org', 'https://arborpad.io'],
+    origin: ['*', 'http://localhost:8081', 'https://portal.arborpad.io', 'http://localhost:8000', 'http://localhost:3000', 'https://adminpanel.arborswap.org', 'https://arborswap-launchpad.vercel.app', 'http://54.242.172.198', 'http://54.173.22.152', 'http://localhost:3001', 'http://3.80.119.93', 'http://34.238.118.99', 'https://protocol.arborswap.org', 'https://arborpad.io','https://arborswap.org'],
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200,
 };
@@ -49,8 +49,9 @@ require('./app/routes/banner.routes')(app);
 require('./app/routes/sale.routes')(app);
 require('./app/routes/airdrop.routes')(app);
 require('./app/routes/lock.routes')(app);
+require('./app/routes/stats.routes')(app);
 // set port, listen for requests
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
 }
