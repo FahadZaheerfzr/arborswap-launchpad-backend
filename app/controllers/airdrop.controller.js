@@ -2,39 +2,35 @@ const db = require('../models');
 const Airdrop = db.airdrop;
 
 // Create and Save a new Airdrop
-exports.create = (req, res) => {
-    console.log('req.body', req.body);
+exports.create = async (req, res) => {
+    try {
+        if (!req.body.airdrop || !req.body.airdrop.airdropAddress) {
+            return res.status(400).send({ message: 'Airdrop address is required!' });
+        }
 
-    console.log('req.body.airdrop', req.body.airdrop);
-    // Validate request
-    if (req.body.airdrop === undefined) {
-        res.status(400).send({ message: 'Content cannot be empty!' });
-        return;
-    }
+        // Check if an airdrop with the same airdropAddress already exists
+        const existing = await Airdrop.findOne({ "airdrop.airdropAddress": req.body.airdrop.airdropAddress });
+        if (existing) {
+            return res.status(409).send({ message: 'Airdrop with this address already exists.' });
+        }
 
-    // Create an Airdrop
-    const airdrop = new Airdrop({
-        airdrop: req.body.airdrop,
-        visible: req.body.visible ? req.body.visible : true,
-        isFinished: req.body.isFinished ? req.body.isFinished : false,
-        removed: req.body.removed ? req.body.removed : false,
-        isCancelled: req.body.isCancelled ? req.body.isCancelled : false,
-        chainId: req.body.chainId
-    });
-
-    // Save Airdrop in the database
-    airdrop
-        .save(airdrop)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).send({
-                message:
-                    err.message || 'Some error occurred while creating the Airdrop.',
-            });
+        const airdrop = new Airdrop({
+            airdrop: req.body.airdrop,
+            visible: req.body.visible !== undefined ? req.body.visible : true,
+            isFinished: req.body.isFinished !== undefined ? req.body.isFinished : false,
+            removed: req.body.removed !== undefined ? req.body.removed : false,
+            isCancelled: req.body.isCancelled !== undefined ? req.body.isCancelled : false,
+            chainId: req.body.chainId
         });
+
+        const data = await airdrop.save();
+        res.send(data);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            message: err.message || 'Some error occurred while creating the Airdrop.',
+        });
+    }
 };
 
 // Retrieve all Airdrops from the database
@@ -54,56 +50,59 @@ exports.findAll = (req, res) => {
           message: err.message || 'Some error occurred while retrieving airdrops.',
         });
       });
-  };
+};
 
-// Find a single Airdrop with an id
+// Find a single Airdrop by airdropAddress
 exports.findOne = (req, res) => {
-    const id = req.params.id;
+    const address = req.params.address;
 
-    Airdrop.findById(id)
+    Airdrop.findOne({ "airdrop.airdropAddress": address })
         .then(data => {
             if (!data) {
-                return res.status(404).send({ message: 'Not found Airdrop with id ' + id });
+                return res.status(404).send({ message: 'Not found Airdrop with address ' + address });
             }
-
             res.send(data);
         })
         .catch(err => {
             console.log(err);
-            res.status(500).send({ message: 'Error retrieving Airdrop with id=' + id });
+            res.status(500).send({ message: 'Error retrieving Airdrop with address=' + address });
         });
 };
 
-// Update an Airdrop by the id in the request
-exports.findByIdAndUpdate = (req, res) => {
-    const id = req.params.id;
+// Update an Airdrop by airdropAddress
+exports.findByAddressAndUpdate = (req, res) => {
+    const address = req.params.address;
     const updateData = req.body;
 
-    Airdrop.findByIdAndUpdate(id, updateData, { new: true })
+    Airdrop.findOneAndUpdate(
+        { "airdrop.airdropAddress": address },
+        updateData,
+        { new: true }
+    )
         .then(updatedAirdrop => {
             if (!updatedAirdrop) {
                 return res.status(404).send({
-                    message: `Airdrop with ID ${id} not found.`,
+                    message: `Airdrop with address ${address} not found.`,
                 });
             }
             res.send(updatedAirdrop);
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || `Error updating Airdrop with ID ${id}.`,
+                message: err.message || `Error updating Airdrop with address ${address}.`,
             });
         });
 };
 
-// Delete an Airdrop with the specified id in the request
+// Delete an Airdrop with the specified airdropAddress in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    const address = req.params.address;
 
-    Airdrop.findByIdAndRemove(id)
+    Airdrop.findOneAndRemove({ "airdrop.airdropAddress": address })
         .then(data => {
             if (!data) {
                 res.status(404).send({
-                    message: `Cannot delete Airdrop with id=${id}. Maybe Airdrop was not found!`,
+                    message: `Cannot delete Airdrop with address=${address}. Maybe Airdrop was not found!`,
                 });
             } else {
                 res.send({
@@ -113,7 +112,7 @@ exports.delete = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: 'Could not delete Airdrop with id=' + id,
+                message: 'Could not delete Airdrop with address=' + address,
             });
         });
 };
