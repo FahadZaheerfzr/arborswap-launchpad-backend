@@ -1,22 +1,21 @@
 module.exports = app => {
-    const airdrop = require("../controllers/airdrop.controller.js");
+  const airdrop = require("../controllers/airdrop.controller.js");
+  const router = require("express").Router();
 
-    var router = require("express").Router();
+  // Create a new Airdrop
+  router.post("/", airdrop.create);
 
-    // Create a new Airdrop
-    router.post("/", airdrop.create);
+  // Retrieve all Airdrops (optionally filtered by chainId)
+  router.get("/", airdrop.findAll);
 
-    // Retrieve all Airdrops
-    router.get("/", airdrop.findAll);
+  // Retrieve a single Airdrop by airdropAddress
+  router.get("/:address", airdrop.findOne);
 
-    // Retrieve a single Airdrop with id
-    router.get("/:id", airdrop.findOne);
+  // Update an Airdrop by airdropAddress
+  router.put("/:address", airdrop.findByAddressAndUpdate);
 
-    // Update a Airdrop with id
-    router.put("/:id", airdrop.findByAddressAndUpdate);
+  // Delete an Airdrop by airdropAddress
+  router.delete("/:address", airdrop.delete);
 
-    // Delete a Airdrop with id
-    router.delete("/:id", airdrop.delete);
-
-    app.use('/api/airdrop', router);
+  app.use('/api/airdrop', router);
 };
