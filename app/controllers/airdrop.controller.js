@@ -2,7 +2,7 @@ const db = require('../models');
 const Airdrop = db.airdrop;
 
 // Create and Save a new Airdrop
-exports.create = async (req, res) => {
+async function create(req, res) {
     try {
         if (!req.body.airdrop || !req.body.airdrop.airdropAddress) {
             return res.status(400).send({ message: 'Airdrop address is required!' });
@@ -31,10 +31,10 @@ exports.create = async (req, res) => {
             message: err.message || 'Some error occurred while creating the Airdrop.',
         });
     }
-};
+}
 
 // Retrieve all Airdrops from the database
-exports.findAll = (req, res) => {
+function findAll(req, res) {
     let { chainId } = req.query;
     chainId = parseInt(chainId);
     const filter = { removed: false };
@@ -50,10 +50,10 @@ exports.findAll = (req, res) => {
           message: err.message || 'Some error occurred while retrieving airdrops.',
         });
       });
-};
+}
 
 // Find a single Airdrop by airdropAddress
-exports.findOne = (req, res) => {
+function findOne(req, res) {
     const address = req.params.address;
 
     Airdrop.findOne({ "airdrop.airdropAddress": address })
@@ -67,10 +67,10 @@ exports.findOne = (req, res) => {
             console.log(err);
             res.status(500).send({ message: 'Error retrieving Airdrop with address=' + address });
         });
-};
+}
 
 // Update an Airdrop by airdropAddress
-exports.findByAddressAndUpdate = (req, res) => {
+function findByAddressAndUpdate(req, res) {
     const address = req.params.address;
     const updateData = req.body;
 
@@ -92,10 +92,10 @@ exports.findByAddressAndUpdate = (req, res) => {
                 message: err.message || `Error updating Airdrop with address ${address}.`,
             });
         });
-};
+}
 
 // Delete an Airdrop with the specified airdropAddress in the request
-exports.delete = (req, res) => {
+function deleteAirdrop(req, res) {
     const address = req.params.address;
 
     Airdrop.findOneAndRemove({ "airdrop.airdropAddress": address })
@@ -115,4 +115,13 @@ exports.delete = (req, res) => {
                 message: 'Could not delete Airdrop with address=' + address,
             });
         });
+}
+
+// Export all controller functions
+module.exports = {
+    create,
+    findAll,
+    findOne,
+    findByAddressAndUpdate,
+    delete: deleteAirdrop
 };
