@@ -13,7 +13,7 @@ module.exports = app => {
     router.get("/:id", airdrop.findOne);
 
     // Update a Airdrop with id
-    router.put("/:id", airdrop.findByIdAndUpdate);
+    router.put("/:id", airdrop.findByAddressAndUpdate);
 
     // Delete a Airdrop with id
     router.delete("/:id", airdrop.delete);
