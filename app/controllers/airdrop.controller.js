@@ -69,6 +69,7 @@ exports.findOne = (req, res) => {
             res.send(data);
         })
         .catch(err => {
+            console.log(err);
             res.status(500).send({ message: 'Error retrieving Airdrop with id=' + id });
         });
 };
