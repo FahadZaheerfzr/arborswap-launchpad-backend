@@ -52,6 +52,52 @@ function findAll(req, res) {
       });
 }
 
+
+function getAllAirdropsByStatus(req, res) {
+    let { chainId } = req.query;
+    chainId = parseInt(chainId);
+    const filter = { removed: false };
+    if (chainId) {
+        filter.chainId = chainId;
+    }
+    Airdrop.find(filter)
+      .then(data => {
+        const currentDate = new Date();
+        const started = [];
+        const upcoming = [];
+        const ended = [];
+
+        data.forEach(airdrop => {
+            const startDate = airdrop.airdrop && airdrop.airdrop.startDate
+                ? new Date(airdrop.airdrop.startDate * 1000)
+                : null;
+            const isFinished = airdrop.isFinished === true;
+
+            if (isFinished) {
+                ended.push(airdrop.toObject());
+            } else if (startDate && startDate > currentDate) {
+                upcoming.push(airdrop.toObject());
+            } else if (startDate && startDate <= currentDate) {
+                started.push(airdrop.toObject());
+            } else {
+                // If no startDate, treat as started by default
+                started.push(airdrop.toObject());
+            }
+        });
+
+        res.send({
+            started,
+            upcoming,
+            ended
+        });
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: err.message || 'Some error occurred while retrieving airdrops.',
+        });
+      });
+}
+
 // Find a single Airdrop by airdropAddress
 function findOne(req, res) {
     const address = req.params.address;
@@ -123,5 +169,6 @@ module.exports = {
     findAll,
     findOne,
     findByAddressAndUpdate,
-    delete: deleteAirdrop
+    delete: deleteAirdrop,
+    getAllAirdropsByStatus,
 };

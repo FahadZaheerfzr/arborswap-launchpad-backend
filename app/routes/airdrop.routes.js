@@ -8,6 +8,8 @@ module.exports = app => {
   // Retrieve all Airdrops (optionally filtered by chainId)
   router.get("/", airdrop.findAll);
 
+  router.get("/status", airdrop.getAllAirdropsByStatus);
+
   // Retrieve a single Airdrop by airdropAddress
   router.get("/:address", airdrop.findOne);
 
